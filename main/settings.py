@@ -98,6 +98,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "main.wsgi.application"
 
+# settings.py
+
+MPESA_CONFIG = {
+    "CONSUMER_KEY": "mnfULhS56mDLr8QG8XzekCVJRQYJHtiRc9zzpCDBvjX1P4vu",
+    "CONSUMER_SECRET": "kwAG1Bs1zZLxFUEWz8hMCc23zRxmvr5gwp9mexucre9cXiGEB2k9LqrzIALaAe50",
+    "HOST_NAME": "http://127.0.0.1:8000",
+    "PASS_KEY": "0714301107",
+    "SAFARICOM_API": "https://sandbox.safaricom.co.ke",
+    "SHORT_CODE": "174379",
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

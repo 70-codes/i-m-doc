@@ -11,6 +11,8 @@ from .views import (
     doctor_appointments,
     create_prescription,
     # patient_appointments,
+    get_user_name,
+    get_prescriptions,
 )
 
 urlpatterns = [
@@ -40,11 +42,7 @@ urlpatterns = [
         create_prescription,
         name="create_prescription",
     ),
-    # path(
-    #     "patients/<int:patient_id>/appointments/",
-    #     patient_appointments,
-    #     name="patient-appointments",
-    # ),
+    path("api/user/<int:user_id>/", get_user_name, name="get_user_name"),
     # Pharmacist routes
-    # path("charges/", charge_patient, name="charge_patient"),
+    path("get-prescriptions/", get_prescriptions),
 ]

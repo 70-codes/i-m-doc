@@ -47,16 +47,14 @@ class Patient(models.Model):
 # Appointment model
 class Appointment(models.Model):
     class StatusChoices(models.TextChoices):
-        PENDING = 'PENDING', 'Pending'
-        CONFIRMED = 'CONFIRMED', 'Confirmed'
-        CANCELLED = 'CANCELLED', 'Cancelled'
+        PENDING = "PENDING", "Pending"
+        CONFIRMED = "CONFIRMED", "Confirmed"
+        CANCELLED = "CANCELLED", "Cancelled"
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     appointment_date = models.DateTimeField()
     status = models.CharField(
-        max_length=10,
-        choices=StatusChoices.choices,
-        default=StatusChoices.PENDING
+        max_length=10, choices=StatusChoices.choices, default=StatusChoices.PENDING
     )
     booked_by = models.ForeignKey(
         User, on_delete=models.CASCADE, limit_choices_to={"role": "receptionist"}

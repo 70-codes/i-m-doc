@@ -53,20 +53,24 @@ class PatientSerializer(serializers.ModelSerializer):
         ]
 
 
+class PatientNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name"]
+
+
 class AppointmentSerializer(serializers.ModelSerializer):
     patient = serializers.PrimaryKeyRelatedField(queryset=Patient.objects.all())
     booked_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    patient_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Appointment
         fields = [
             "id",
             "patient",
-            "patient_name",
             "appointment_date",
-            "booked_by",
             "status",
+            "booked_by",
         ]
 
     def get_patient_name(self, obj):
@@ -74,6 +78,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
+
+    patient = serializers.PrimaryKeyRelatedField(queryset=Patient.objects.all())
+    added_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
     class Meta:
         model = MedicalRecord
         fields = [
@@ -86,6 +94,12 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
 
 
 class PrescriptionSerializer(serializers.ModelSerializer):
+
+    medical_record = serializers.PrimaryKeyRelatedField(
+        queryset=MedicalRecord.objects.all()
+    )
+    prescribed_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
     class Meta:
         model = Prescription
         fields = [

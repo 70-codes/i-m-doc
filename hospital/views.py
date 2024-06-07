@@ -125,7 +125,7 @@ def book_appointment_for_patient(request, patient_id):
 
     data = request.data.copy()
     data["patient"] = patient.id
-    data["booked_by"] = request.user.id  # Set the booked_by field to the current user
+    data["booked_by"] = request.user.id
 
     print(f"Request Data: {data}")
 
@@ -171,6 +171,19 @@ def get_patient(request, patient_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# Get user names using the user-id attribute
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_user_name(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = UserSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # View for handling medical record creation
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -185,7 +198,7 @@ def doctor_appointments(request):
             {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
         )
 
-    appointments = Appointment.objects.filter(booked_by=request.user)
+    appointments = Appointment.objects.all()
     serializer = AppointmentSerializer(appointments, many=True)
     return Response(serializer.data)
 
@@ -278,10 +291,19 @@ def create_prescription(request, medical_record_id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# @api_view("[GET]")
-# @permission_classes([IsAuthenticated])
-# def show_transactions(request):
-#     if request.user.role != "admin":
-#         return Response(
-#             {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
-#         )
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_prescriptions(request):
+    if request.user.role not in [
+        "receptionist",
+        "admin",
+        "pharmacist",
+        "doctor",
+    ]:
+        return Response(
+            {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
+        )
+
+    prescriptions = Prescription.objects.all()
+    serializer = PrescriptionSerializer(prescriptions, many=True)
+    return Response(serializer.data)
