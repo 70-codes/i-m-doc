@@ -1,6 +1,12 @@
 from rest_framework import serializers
-from .models import User, Patient, Appointment, MedicalRecord, Prescription, Charge
-from mpesa.models import PaymentTransaction
+from .models import (
+    User,
+    Patient,
+    Appointment,
+    MedicalRecord,
+    Prescription,
+    PaymentTransaction,
+)
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
@@ -50,6 +56,8 @@ class PatientSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "phone_number",
+            "added_at",
+            "date_of_birth",
         ]
 
 
@@ -99,11 +107,13 @@ class PrescriptionSerializer(serializers.ModelSerializer):
         queryset=MedicalRecord.objects.all()
     )
     prescribed_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    patient = serializers.PrimaryKeyRelatedField(queryset=Patient.objects.all())
 
     class Meta:
         model = Prescription
         fields = [
             "id",
+            "patient",
             "medical_record",
             "medication",
             "dosage",
@@ -111,17 +121,26 @@ class PrescriptionSerializer(serializers.ModelSerializer):
         ]
 
 
-class ChargeSerializer(serializers.ModelSerializer):
+class MedicalRecordWithPrescriptionsSerializer(serializers.ModelSerializer):
+    patient = serializers.PrimaryKeyRelatedField(queryset=Patient.objects.all())
+    added_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    prescriptions = PrescriptionSerializer(
+        many=True, read_only=True, source="prescription_set"
+    )
+
     class Meta:
-        model = Charge
+        model = MedicalRecord
         fields = [
             "id",
-            "prescription",
-            "amount",
-            "charged_by",
+            "patient",
+            "symptoms",
+            "diagnosis_date",
+            "added_by",
+            "prescriptions",
         ]
 
 
-class TransactionsSerializer(serializers.ModelSerializer):
+class PaymentTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentTransaction
+        fields = "__all__"

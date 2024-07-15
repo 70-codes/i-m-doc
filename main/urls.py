@@ -17,7 +17,6 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from mpesa.urls import mpesa_urls
 
 
 # drf auth
@@ -28,8 +27,8 @@ from rest_framework.authtoken import views as auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("hospital.urls")),
+    
     #
     path("api-auth/", include("rest_framework.urls")),  # Add this line for DRF login
     path("api-token-auth/", auth_views.obtain_auth_token),
-    path("mpesa/", include(mpesa_urls)),
 ]
